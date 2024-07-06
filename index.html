@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Ventas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Registro de Ventas en el Supermercado</h1>
+  
+  <section>
+    <h2>Registrar Venta</h2>
+    <form id="venta-form">
+      <label for="producto">Producto:</label>
+      <select id="producto">
+        <option value="1">Manzana</option>
+        <option value="2">Pan</option>
+        <option value="3">Jugo</option>
+        <option value="4">Shampoo</option>
+      </select>
+      
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" min="1" required>
+      
+      <label for="hora">Hora:</label>
+      <input type="time" id="hora" required>
+      
+      <button type="button" id="agregar-producto">Agregar Producto</button>
+    </form>
+    
+    <h3>Productos en la Venta</h3>
+    <ul id="productos-list"></ul>
+    
+    <button type="button" id="registrar-venta">Registrar Venta</button>
+  </section>
+  
+  <section>
+    <h2>Ventas Realizadas</h2>
+    <ul id="ventas-list"></ul>
+  </section>
+  
+  <section>
+    <h2>Ingresos por Categoría</h2>
+    <ul id="categorias-list"></ul>
+  </section>
+  
+  <section>
+    <h2>Ventas por Hora</h2>
+    <ul id="horas-list"></ul>
+  </section>
+  
+  <section>
+    <h2>Tique de Venta Diaria</h2>
+    <div id="tique"></div>
+  </section>
+  
+  <script type="module">
+    import { registrarVenta } from './js/ventas.js';
+    import { actualizarDOM } from './js/dom.js';
+
+    let ventaActual = {
+      productos: [],
+      hora: ''
+    };
+    
+    document.getElementById('agregar-producto').addEventListener('click', () => {
+      const idProducto = parseInt(document.getElementById('producto').value);
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+      const hora = document.getElementById('hora').value;
+      
+      if (!hora) {
+        alert('Por favor, seleccione una hora.');
+        return;
+      }
+      
+      ventaActual.productos.push({ idProducto, cantidad });
+      ventaActual.hora = hora;
+      
+      const productosList = document.getElementById('productos-list');
+      const productoItem = document.createElement('li');
+      productoItem.textContent = `Producto: ${idProducto}, Cantidad: ${cantidad}`;
+      productosList.appendChild(productoItem);
+    });
+    
+    document.getElementById('registrar-venta').addEventListener('click', () => {
+      if (ventaActual.productos.length === 0) {
+        alert('Por favor, agregue al menos un producto a la venta.');
+        return;
+      }
+      
+      registrarVenta(ventaActual);
+      actualizarDOM();
+      
+      ventaActual = { productos: [], hora: '' };
+      document.getElementById('productos-list').innerHTML = '';
+    });
+    
+    // Simular ventas para mostrar la funcionalidad inicial
+    registrarVenta({ productos: [{ idProducto: 1, cantidad: 5 }], hora: '10:00' });
+    registrarVenta({ productos: [{ idProducto: 2, cantidad: 3 }], hora: '11:00' });
+    registrarVenta({ productos: [{ idProducto: 3, cantidad: 7 }], hora: '12:00' });
+    registrarVenta({ productos: [{ idProducto: 4, cantidad: 12 }], hora: '13:00' });
+
+    actualizarDOM();
+  </script>
+</body>
+</html>
